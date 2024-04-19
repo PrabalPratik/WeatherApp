@@ -48,26 +48,6 @@ body {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
-.search button {
-  margin-left: 15px;
-  padding: 20px 40px;
-  background-color: #f39c12;
-  color: #fff;
-  border: none;
-  border-radius: 40px;
-  font-size: 20px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-.search button:hover {
-  background-color: #e67e22;
-  transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-}
-
 /* Loading and Error */
 .loading,
 .error {
@@ -118,6 +98,7 @@ body {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 40px;
   text-align: left;
+  margin-bottom: 50px;
 }
 
 .bottom > div {
@@ -146,68 +127,132 @@ body {
   text-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Existing styles will remain unchanged */
+/* 7-Day Forecast */
+.forecast {
+  margin-top: 50px;
+}
+
+.forecast h2 {
+  font-size: 36px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.forecast-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 37px;
+  text-align: center;
+}
+
+.forecast-item {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.forecast-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.forecast-item p {
+  font-size: 16px;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.forecast-item img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
 
 /* Media Query for Tablets */
 @media (max-width: 768px) {
   .app {
-    padding: 30px; /* Reduced padding for smaller screens */
-    max-width: 90%; /* Full width with a little margin on the sides */
+    padding: 30px;
+    max-width: 90%;
   }
 
-  .search input, .search button {
-    padding: 15px; /* Smaller padding */
+  .search input,
+  .search button {
+    padding: 15px;
   }
 
-  .location p, .temp h1, .description p {
-    font-size: reduce-font-size-accordingly; /* Adjust font sizes accordingly */
+  .location p,
+  .temp h1,
+  .description p {
+    font-size: 24px;
+  }
+
+  .temp h1 {
+    font-size: 80px;
   }
 
   .bottom {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns layout for better fit */
-    grid-gap: 20px; /* Reduced gap */
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
   }
 
   .bottom > div {
-    padding: 20px; /* Less padding inside each box */
+    padding: 20px;
+  }
+
+  .forecast-container {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
 /* Media Query for Mobile Phones */
 @media (max-width: 480px) {
   .search {
-    flex-direction: column; /* Stack the elements vertically */
-    margin-bottom: 20px; /* Less space between search elements */
+    flex-direction: column;
+    margin-bottom: 20px;
   }
 
   .search input {
-    margin-bottom: 10px; /* Space between input and button */
-    padding: 10px 15px; /* Smaller input field */
+    margin-bottom: 10px;
+    padding: 10px 15px;
   }
 
   .search button {
-    width: 100%; /* Button to take full width */
-    padding: 10px; /* Smaller button */
+    width: 100%;
+    padding: 10px;
   }
 
-  .location p, .temp h1, .description p {
-    font-size: reduce-font-size-even-more; /* Further reduce font sizes */
+  .location p,
+  .temp h1,
+  .description p {
+    font-size: 18px;
+  }
+
+  .temp h1 {
+    font-size: 60px;
   }
 
   .bottom {
-    grid-template-columns: 1fr; /* Single column layout */
+    grid-template-columns: 1fr;
   }
 
   .bottom > div {
-    padding: 15px; /* Even less padding */
+    padding: 15px;
+  }
+
+  .forecast-container {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 /* Optional: Handling for very large screens */
 @media (min-width: 1440px) {
   .app {
-    max-width: 1200px; /* Optional: larger max-width for very large screens */
-    padding: 60px; /* Slightly more padding */
+    max-width: 1200px;
+    padding: 60px;
   }
 }
-
