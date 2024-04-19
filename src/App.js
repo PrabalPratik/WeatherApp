@@ -4,6 +4,7 @@ import moment from 'moment'
 
 function App() {
   const [data, setData] = useState({})
+  const [forecast, setForecast] = useState([])
   const [location, setLocation] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -18,6 +19,8 @@ function App() {
           (position) => {
             const { latitude, longitude } = position.coords
             const geoUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`
+
             axios
               .get(geoUrl)
               .then((response) => {
@@ -26,6 +29,15 @@ function App() {
               })
               .catch((error) => {
                 setError('Failed to fetch location data')
+              })
+
+            axios
+              .get(forecastUrl)
+              .then((response) => {
+                setForecast(response.data.list)
+              })
+              .catch((error) => {
+                setError('Failed to fetch forecast data')
               })
           },
           (error) => {
@@ -71,6 +83,23 @@ function App() {
 
   const toggleUnit = () => {
     setUnit(unit === 'metric' ? 'imperial' : 'metric')
+  }
+
+  const renderForecast = () => {
+    return forecast.filter((_, index) => index % 8 === 0).map((item) => (
+      <div key={item.dt} className="forecast-item">
+        <p>{moment.unix(item.dt).format('ddd')}</p>
+        <img
+          src={`http://openweathermap.org/img/w/${item.weather[0].icon}.png`}
+          alt={item.weather[0].description}
+        />
+        <p>
+          {unit === 'metric'
+            ? `${item.main.temp.toFixed(0)}°C`
+            : `${(((item.main.temp * 9) / 5) + 32).toFixed(0)}°F`}
+        </p>
+      </div>
+    ))
   }
 
   return (
@@ -155,6 +184,12 @@ function App() {
           </div>
         )}
       </div>
+      {data.name !== undefined && (
+        <div className="forecast">
+          <h2>7-Day Forecast</h2>
+          <div className="forecast-container">{renderForecast()}</div>
+        </div>
+      )}
     </div>
   )
 }
