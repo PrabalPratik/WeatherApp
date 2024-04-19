@@ -145,3 +145,69 @@ body {
   color: #fff;
   text-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 }
+
+/* Existing styles will remain unchanged */
+
+/* Media Query for Tablets */
+@media (max-width: 768px) {
+  .app {
+    padding: 30px; /* Reduced padding for smaller screens */
+    max-width: 90%; /* Full width with a little margin on the sides */
+  }
+
+  .search input, .search button {
+    padding: 15px; /* Smaller padding */
+  }
+
+  .location p, .temp h1, .description p {
+    font-size: reduce-font-size-accordingly; /* Adjust font sizes accordingly */
+  }
+
+  .bottom {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns layout for better fit */
+    grid-gap: 20px; /* Reduced gap */
+  }
+
+  .bottom > div {
+    padding: 20px; /* Less padding inside each box */
+  }
+}
+
+/* Media Query for Mobile Phones */
+@media (max-width: 480px) {
+  .search {
+    flex-direction: column; /* Stack the elements vertically */
+    margin-bottom: 20px; /* Less space between search elements */
+  }
+
+  .search input {
+    margin-bottom: 10px; /* Space between input and button */
+    padding: 10px 15px; /* Smaller input field */
+  }
+
+  .search button {
+    width: 100%; /* Button to take full width */
+    padding: 10px; /* Smaller button */
+  }
+
+  .location p, .temp h1, .description p {
+    font-size: reduce-font-size-even-more; /* Further reduce font sizes */
+  }
+
+  .bottom {
+    grid-template-columns: 1fr; /* Single column layout */
+  }
+
+  .bottom > div {
+    padding: 15px; /* Even less padding */
+  }
+}
+
+/* Optional: Handling for very large screens */
+@media (min-width: 1440px) {
+  .app {
+    max-width: 1200px; /* Optional: larger max-width for very large screens */
+    padding: 60px; /* Slightly more padding */
+  }
+}
+
