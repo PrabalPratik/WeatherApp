@@ -9,6 +9,7 @@ function App() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [unit, setUnit] = useState('metric')
+  const [currentTime, setCurrentTime] = useState(moment().format('h:mm:ss A'))
 
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`
 
@@ -50,6 +51,11 @@ function App() {
     }
 
     fetchUserLocation()
+    const interval = setInterval(() => {
+      setCurrentTime(moment().format('h:mm:ss A'))
+    }, 1000)
+
+    return () => clearInterval(interval)
   }, [unit])
 
   const searchLocation = (event) => {
@@ -132,6 +138,9 @@ function App() {
           <div className="description">
             {data.weather ? <p>{data.weather[0].description}</p> : null}
           </div>
+          <div className="time">
+            <p>{currentTime}</p>
+          </div>
         </div>
         {data.name !== undefined && (
           <div className="bottom">
@@ -186,7 +195,7 @@ function App() {
       </div>
       {data.name !== undefined && (
         <div className="forecast">
-          <h2>7-Day Forecast</h2>
+          <h2>5-Day Forecast</h2>
           <div className="forecast-container">{renderForecast()}</div>
         </div>
       )}
