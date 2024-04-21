@@ -92,7 +92,7 @@ function App() {
   }
 
   const renderForecast = () => {
-    return forecast.filter((_, index) => index % 8 === 0).map((item) => (
+    return forecast.filter((_, index) => index % 7 === 0).map((item) => (
       <div key={item.dt} className="forecast-item">
         <p>{moment.unix(item.dt).format('ddd')}</p>
         <img
