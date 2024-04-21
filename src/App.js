@@ -9,7 +9,7 @@ function App() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [unit, setUnit] = useState('metric')
-  const [currentTime, setCurrentTime] = useState(moment().format('h:mm:ss A'))
+  const [currentTime, setCurrentTime] = useState(moment().format('h:mm A'))
 
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`
 
@@ -52,7 +52,7 @@ function App() {
 
     fetchUserLocation()
     const interval = setInterval(() => {
-      setCurrentTime(moment().format('h:mm:ss A'))
+      setCurrentTime(moment().format('h:mm A'))
     }, 1000)
 
     return () => clearInterval(interval)
