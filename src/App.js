@@ -1,115 +1,120 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import moment from 'moment'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import moment from 'moment';
+
+// Header Component
+const Header = () => {
+  return (
+    <div className="header">
+      <h1>Weather App</h1>
+    </div>
+  );
+};
 
 function App() {
-  const [data, setData] = useState({})
-  const [forecast, setForecast] = useState([])
-  const [location, setLocation] = useState('')
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [unit, setUnit] = useState('metric')
-  const [currentTime, setCurrentTime] = useState(moment().format('h:mm A'))
+  const [data, setData] = useState({});
+  const [forecast, setForecast] = useState([]);
+  const [location, setLocation] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [unit, setUnit] = useState('metric');
+  const [currentTime, setCurrentTime] = useState(moment().format('h:mm A'));
 
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`;
 
   useEffect(() => {
     const fetchUserLocation = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            const { latitude, longitude } = position.coords
-            const geoUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`
-            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`
+            const { latitude, longitude } = position.coords;
+            const geoUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`;
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`;
 
             axios
               .get(geoUrl)
               .then((response) => {
-                setData(response.data)
-                setLocation(response.data.name)
+                setData(response.data);
+                setLocation(response.data.name);
               })
-              .catch((error) => {
-                setError('Failed to fetch location data')
-              })
+              .catch(() => {
+                setError('Failed to fetch location data');
+              });
 
             axios
               .get(forecastUrl)
               .then((response) => {
-                setForecast(response.data.list)
+                setForecast(response.data.list);
               })
-              .catch((error) => {
-                setError('Failed to fetch forecast data')
-              })
+              .catch(() => {
+                setError('Failed to fetch forecast data');
+              });
           },
-          (error) => {
-            setError('Unable to retrieve your location')
+          () => {
+            setError('Unable to retrieve your location');
           }
-        )
+        );
       } else {
-        setError('Geolocation is not supported by this browser')
+        setError('Geolocation is not supported by this browser');
       }
-    }
+    };
 
-    fetchUserLocation()
+    fetchUserLocation();
     const interval = setInterval(() => {
-      setCurrentTime(moment().format('h:mm A'))
-    }, 1000)
+      setCurrentTime(moment().format('h:mm A'));
+    }, 1000);
 
-    return () => clearInterval(interval)
-  }, [unit])
+    return () => clearInterval(interval);
+  }, [unit]);
 
   const searchLocation = (event) => {
     if (event.key === 'Enter') {
-      setIsLoading(true)
+      setIsLoading(true);
       axios
         .get(url)
         .then((response) => {
-          setData(response.data)
-          setError('')
+          setData(response.data);
+          setError('');
         })
-        .catch((error) => {
-          setError('Location not found')
+        .catch(() => {
+          setError('Location not found');
         })
         .finally(() => {
-          setIsLoading(false)
-          setLocation('')
-        })
+          setIsLoading(false);
+          setLocation('');
+        });
     }
-  }
+  };
 
   const getWindDirection = (deg) => {
-    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
-    const index = Math.round(((deg %= 360) < 0 ? deg + 360 : deg) / 45) % 8
-    return directions[index]
-  }
+    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    const index = Math.round(((deg %= 360) < 0 ? deg + 360 : deg) / 45) % 8;
+    return directions[index];
+  };
 
   const formatUnixTimestamp = (unixTimestamp) => {
-    return moment.unix(unixTimestamp).format('h:mm A')
-  }
+    return moment.unix(unixTimestamp).format('h:mm A');
+  };
 
   const toggleUnit = () => {
-    setUnit(unit === 'metric' ? 'imperial' : 'metric')
-  }
+    setUnit(unit === 'metric' ? 'imperial' : 'metric');
+  };
 
   const renderForecast = () => {
     return forecast.filter((_, index) => index % 8 === 0).map((item) => (
       <div key={item.dt} className="forecast-item">
         <p>{moment.unix(item.dt).format('ddd')}</p>
-        <img
-          src={`http://openweathermap.org/img/w/${item.weather[0].icon}.png`}
-          alt={item.weather[0].description}
-        />
+        <img src={`http://openweathermap.org/img/w/${item.weather[0].icon}.png`} alt={item.weather[0].description} />
         <p>
-          {unit === 'metric'
-            ? `${item.main.temp.toFixed(0)}°C`
-            : `${(((item.main.temp * 9) / 5) + 32).toFixed(0)}°F`}
+          {unit === 'metric' ? `${item.main.temp.toFixed(0)}°C` : `${(((item.main.temp * 9) / 5) + 32).toFixed(0)}°F`}
         </p>
       </div>
-    ))
-  }
+    ));
+  };
 
   return (
     <div className="app">
+      <Header /> 
       <div className="search">
         <input
           value={location}
@@ -129,9 +134,7 @@ function App() {
           <div className="temp">
             {data.main ? (
               <h1>
-                {unit === 'metric'
-                  ? `${data.main.temp.toFixed(0)}°C`
-                  : `${(((data.main.temp * 9) / 5) + 32).toFixed(0)}°F`}
+                {unit === 'metric' ? `${data.main.temp.toFixed(0)}°C` : `${(((data.main.temp * 9) / 5) + 32).toFixed(0)}°F`}
               </h1>
             ) : null}
           </div>
@@ -147,9 +150,7 @@ function App() {
             <div className="feels">
               {data.main ? (
                 <p className="bold">
-                  {unit === 'metric'
-                    ? `${data.main.feels_like.toFixed(0)}°C`
-                    : `${(((data.main.feels_like * 9) / 10) + 32).toFixed(0)}°F`}
+                  {unit === 'metric' ? `${data.main.feels_like.toFixed(0)}°C` : `${(((data.main.feels_like * 9) / 10) + 32).toFixed(0)}°F`}
                 </p>
               ) : null}
               <p>Feels Like</p>
@@ -161,11 +162,7 @@ function App() {
             <div className="wind">
               {data.wind ? (
                 <div>
-                  <p className="bold">
-                    {data.wind.speed.toFixed(1)}{' '}
-                    {unit === 'metric' ? 'm/s' : 'mph'}{' '}
-                    {getWindDirection(data.wind.deg)}
-                  </p>
+                  <p className="bold">{data.wind.speed.toFixed(1)} {unit === 'metric' ? 'm/s' : 'mph'} {getWindDirection(data.wind.deg)}</p>
                   <p>Wind</p>
                 </div>
               ) : null}
@@ -200,7 +197,7 @@ function App() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
