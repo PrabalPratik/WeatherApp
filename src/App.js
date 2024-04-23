@@ -19,8 +19,11 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [unit, setUnit] = useState('metric');
   const [currentTime, setCurrentTime] = useState(moment().format('h:mm A'));
+  const [maxTemp, setMaxTemp] = useState('');
+  const [minTemp, setMinTemp] = useState('');
 
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`;
+  const apiKey = '895284fb2d2c50a520ea537456963d9c';
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=${unit}&appid=${apiKey}`;
 
   useEffect(() => {
     const fetchUserLocation = () => {
@@ -28,26 +31,33 @@ function App() {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
-            const geoUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`;
-            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=895284fb2d2c50a520ea537456963d9c`;
+            const geoUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${apiKey}`;
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${apiKey}`;
 
             axios
               .get(geoUrl)
               .then((response) => {
                 setData(response.data);
                 setLocation(response.data.name);
+
+                axios
+                  .get(forecastUrl)
+                  .then((forecastResponse) => {
+                    setForecast(forecastResponse.data.list);
+
+                    const temps = forecastResponse.data.list.map((item) => item.main.temp);
+                    const maxTemp = Math.max(...temps);
+                    const minTemp = Math.min(...temps);
+
+                    setMaxTemp(maxTemp.toFixed(0));
+                    setMinTemp(minTemp.toFixed(0));
+                  })
+                  .catch(() => {
+                    setError('Failed to fetch forecast data');
+                  });
               })
               .catch(() => {
                 setError('Failed to fetch location data');
-              });
-
-            axios
-              .get(forecastUrl)
-              .then((response) => {
-                setForecast(response.data.list);
-              })
-              .catch(() => {
-                setError('Failed to fetch forecast data');
               });
           },
           () => {
@@ -65,7 +75,7 @@ function App() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [unit]);
+  }, [unit, apiKey]);
 
   const searchLocation = (event) => {
     if (event.key === 'Enter') {
@@ -75,6 +85,24 @@ function App() {
         .then((response) => {
           setData(response.data);
           setError('');
+
+          const { lat, lon } = response.data.coord;
+          const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${unit}&appid=${apiKey}`;
+          axios
+            .get(forecastUrl)
+            .then((forecastResponse) => {
+              setForecast(forecastResponse.data.list);
+
+              const temps = forecastResponse.data.list.map((item) => item.main.temp);
+              const maxTemp = Math.max(...temps);
+              const minTemp = Math.min(...temps);
+
+              setMaxTemp(maxTemp.toFixed(0));
+              setMinTemp(minTemp.toFixed(0));
+            })
+            .catch(() => {
+              setError('Failed to fetch forecast data');
+            });
         })
         .catch(() => {
           setError('Location not found');
@@ -96,10 +124,6 @@ function App() {
     return moment.unix(unixTimestamp).format('h:mm A');
   };
 
-  const toggleUnit = () => {
-    setUnit(unit === 'metric' ? 'imperial' : 'metric');
-  };
-
   const renderForecast = () => {
     return forecast.filter((_, index) => index % 8 === 0).map((item) => (
       <div key={item.dt} className="forecast-item">
@@ -114,7 +138,7 @@ function App() {
 
   return (
     <div className="app">
-      <Header /> 
+      <Header />
       <div className="search">
         <input
           value={location}
@@ -127,24 +151,32 @@ function App() {
       {isLoading && <div className="loading">Loading...</div>}
       {error && <div className="error">{error}</div>}
       <div className="container">
-        <div className="top">
-          <div className="location">
-            <p>{data.name}</p>
+        {data.name !== undefined && (
+          <div className="top">
+            <div className="location">
+              <p>{data.name}</p>
+            </div>
+            <div className="temp">
+              {data.main ? (
+                <h1>
+                  {unit === 'metric' ? `${data.main.temp.toFixed(0)}°C` : `${(((data.main.temp * 9) / 5) + 32).toFixed(0)}°F`}
+                </h1>
+              ) : null}
+              {maxTemp && minTemp && (
+                <p>
+                  Max: {unit === 'metric' ? `${maxTemp}°C` : `${(((maxTemp * 9) / 5) + 32).toFixed(0)}°F`} | Min:{' '}
+                  {unit === 'metric' ? `${minTemp}°C` : `${(((minTemp * 9) / 5) + 32).toFixed(0)}°F`}
+                </p>
+              )}
+            </div>
+            <div className="description">
+              {data.weather ? <p>{data.weather[0].description}</p> : null}
+            </div>
+            <div className="time">
+              <p>{currentTime}</p>
+            </div>
           </div>
-          <div className="temp">
-            {data.main ? (
-              <h1>
-                {unit === 'metric' ? `${data.main.temp.toFixed(0)}°C` : `${(((data.main.temp * 9) / 5) + 32).toFixed(0)}°F`}
-              </h1>
-            ) : null}
-          </div>
-          <div className="description">
-            {data.weather ? <p>{data.weather[0].description}</p> : null}
-          </div>
-          <div className="time">
-            <p>{currentTime}</p>
-          </div>
-        </div>
+        )}
         {data.name !== undefined && (
           <div className="bottom">
             <div className="feels">
