@@ -72,7 +72,11 @@ body {
   text-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
 }
 
-.time{
+.temp p{
+  font-size: 25px;
+}
+
+.time {
   font-size: 35px;
 }
 
@@ -294,7 +298,7 @@ body {
     height: 30px;
   }
 
-  .time{
+  .time {
     font-size: 25px;
   }
 }
