@@ -1,7 +1,6 @@
 # Weather App
 
-A modern, responsive weather application built with React that provides real-time weather information and forecasts. The app includes PWA (Progressive Web App) support for offline functionality and can be installed on mobile devices.
-
+A modern, responsive weather application built with React that provides real-time weather information and forecasts.
 ## Features
 
 - **Real-time Weather Data**: Get current weather conditions for any location
